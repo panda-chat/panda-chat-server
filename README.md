@@ -12,6 +12,6 @@
 ## Running it
 
   - Run migrations.
-    - `env\Scripts\python manage.py migrate`
+    - `python manage.py migrate`
   - Start the server.
-    - `env\Scripts\python manage.py runserver`
+    - `python manage.py runserver`
