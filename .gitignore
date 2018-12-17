@@ -1,0 +1,8 @@
+# compiled Python files
+**.pyc
+
+# venv directory
+/env/
+
+# file used for easier multiline commits
+commit_message
