@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Panda Chat</title>
+<script>
+    var socket;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var is_scrolled_to_bottom = true;
+        var scroll_tolerance = 20;
+        var messages = document.getElementById("messages");
+        messages.addEventListener("scroll", function() {
+            is_scrolled_to_bottom = messages.scrollTop + messages.clientHeight + scroll_tolerance >= messages.scrollHeight;
+        });
+
+        socket = new WebSocket("ws://206.81.0.114:8000/chat/"); //TODO get url from config or something
+        socket.addEventListener("message", function (event) {
+            var node = document.createElement("p");
+            var text_node = document.createTextNode(event.data)
+            node.appendChild(text_node);
+            messages.appendChild(node);
+            if (is_scrolled_to_bottom) {
+
+            }
+        });
+    });
+
+    function onMessageKeyPress() {
+        var key = window.event.keyCode;
+
+        if (key == 13) {
+            socket.send(document.getElementById("message-box").value);
+            document.getElementById("message-box").value = "";
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>
+<style>
+    body {
+        margin: 0;
+        background: #ddd;
+    }
+
+    #chat-area {
+        position: absolute;
+        width: 600px;
+        margin: 8px 0;
+        height: calc(100% - 16px);
+        background: #fff;
+        left: calc(50% - 300px);
+    }
+
+    #message-box {
+        position: absolute;
+        bottom: 0;
+        width: 578px;
+        height: 80px;
+        margin: 8px;
+        resize: none;
+    }
+
+    #messages {
+        max-height: calc(100% - 94px);
+        width: calc(100% - 32px);
+        padding: 0 16px;
+        position: absolute;
+        bottom: 94px;
+        overflow-y: scroll;
+    }
+
+    #messages > p {
+        font-family: sans-serif;
+        font-size: 0.8em;
+    }
+</style>
+</head>
+<body>
+    <div id="chat-area">
+        <div id="messages"></div>
+        <textarea id="message-box" onkeypress="return onMessageKeyPress();"></textarea>
+    </div>
+</body>
+</html>
