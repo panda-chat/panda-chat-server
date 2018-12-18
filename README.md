@@ -3,8 +3,9 @@
 ## Requirements
 
   - Python 3.7.1+
+  - (Recommended) Set up a virtual environment for the project using venv or whatever tool you prefer.
+    - Preferably put your virtual environment in /env/ or /.venv/ since those directories are already excluded via .gitignore.
   - Install other dependencies using pip.
-    - (Recommended) First, set up a virtual environment for the project using venv or whatever tool you prefer.
     - `pip install -r requirements`
   - Install PostgreSQL 11.1+
   - Add user to PostgreSQL named `django` with password `6NdYI42&E43ZIA@pcBw@`

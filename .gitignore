@@ -1,7 +1,8 @@
 # compiled Python files
 **.pyc
 
-# venv directory
+# possible venv directories
+/.venv/
 /env/
 
 # file used for easier multiline commits
