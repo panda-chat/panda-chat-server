@@ -79,7 +79,7 @@ ASGI_APPLICATION = "pandachat.routing.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
+        "NAME": "chatserver",
         "USER": "django",
         "PASSWORD": "6NdYI42&E43ZIA@pcBw@",
         "HOST": "127.0.0.1",

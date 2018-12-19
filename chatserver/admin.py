@@ -3,9 +3,9 @@ from django.contrib import admin
 from .models import Client, Message
 
 
-class MessageAdmin(admin.ModelAdmin):
-    readonly_fields = ("created",)
+class BaseAdmin(admin.ModelAdmin):
+    readonly_fields = ("id", "created")
 
 
-admin.site.register(Client)
-admin.site.register(Message, MessageAdmin)
+admin.site.register(Client, BaseAdmin)
+admin.site.register(Message, BaseAdmin)
