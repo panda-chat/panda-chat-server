@@ -31,10 +31,10 @@
                 }
             }
         };
-        xhttp.open("GET", "http://127.0.0.1:8000/messages/?quantity=50", false); //TODO get url from config or something
+        xhttp.open("GET", "{% url 'messages' %}?quantity=50", false);
         xhttp.send();
 
-        socket = new WebSocket("ws://127.0.0.1:8000/ws/"); //TODO get url from config or something
+        socket = new WebSocket("ws://" + window.location.host + "/ws/");
         socket.onmessage = function (event) {
             addTextNode(JSON.parse(event.data));
         };
