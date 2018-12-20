@@ -4,7 +4,7 @@
 <head>
     <title>Panda Chat</title>
 <script>
-    var socket;
+    var socket = null;
     var is_scrolled_to_bottom = true;
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -14,11 +14,17 @@
             is_scrolled_to_bottom = messages.scrollTop + messages.clientHeight + scroll_tolerance >= messages.scrollHeight;
         });
 
+        startChat();
+        setInterval(checkSocket, 5000);
+    });
+
+    function startChat() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var response = JSON.parse(this.responseText);
 
+                clearChat();
                 // Response is in reverse chronological order.
                 for (var i = response.length - 1; i >= 0; i--) {
                     addTextNode(response[i])
@@ -28,14 +34,25 @@
         xhttp.open("GET", "http://127.0.0.1:8000/messages/?quantity=50", false); //TODO get url from config or something
         xhttp.send();
 
-        openSocket();
-    });
-
-    function openSocket() {
         socket = new WebSocket("ws://127.0.0.1:8000/ws/"); //TODO get url from config or something
-        socket.addEventListener("message", function (event) {
+        socket.onmessage = function (event) {
             addTextNode(JSON.parse(event.data));
-        });
+        };
+        socket.onclose = function (event) {
+            checkSocket();
+        };
+    }
+
+    function checkSocket() {
+        if (!socket || socket.readyState == WebSocket.CLOSED) {
+            startChat();
+        }
+    }
+
+    function clearChat() {
+        while (messages.firstChild) {
+            messages.removeChild(messages.firstChild);
+        }
     }
 
     function addTextNode(message) {
