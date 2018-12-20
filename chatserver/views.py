@@ -20,7 +20,7 @@ def messages(request):
     return JsonResponse(
         [
             to_json_object(
-                msg.content, id=msg.id, sender_id=msg.sender_id, time=msg.created
+                msg.content, id=msg.id, sender=msg.sender.user_name, time=msg.created
             )
             for msg in messages[:quantity]
         ],

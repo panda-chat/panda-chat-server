@@ -1,27 +1,32 @@
 from channels.generic.websocket import WebsocketConsumer
 from .models import Client
 from .json_formatter import JsonFormatter
+from .broadcaster import broadcast, register, unregister
 
 
 class ChatConsumer(WebsocketConsumer, JsonFormatter):
 
-    consumers = {}
-    next_consumer_id = 0
-
     def connect(self):
-        self.user = Client(user_name=None, address=self.scope["client"][0])
+        address = self.scope["client"][0]
+        try:
+            self.user = Client.objects.get(address=address)
+        except Client.DoesNotExist:
+            self.user = Client(user_name=None, address=address)
 
         self.accept()
-        self.send(text_data=self.format("What is your name?"))
+        if self.user.user_name == None:
+            self.send(text_data=self.format("What is your name?"))
+        else:
+            register(self, self.format(f"{self.user.user_name} connected."))
 
     def receive(self, *, text_data):
         if self.user.user_name != None:
             new_message = self.user.message_set.create(content=text_data)
-            ChatConsumer.broadcast(
+            broadcast(
                 self.format(
                     new_message.content,
                     id=new_message.id,
-                    sender_id=self.user.id,
+                    sender=self.user.user_name,
                     time=new_message.created,
                 )
             )
@@ -29,25 +34,7 @@ class ChatConsumer(WebsocketConsumer, JsonFormatter):
         else:
             self.user.user_name = text_data
             self.user.save()
-            ChatConsumer.add_consumer(self)
-            ChatConsumer.broadcast(
-                self.format(f"{self.user.user_name} has joined the chat.")
-            )
+            register(self, self.format(f"{self.user.user_name} joined the chat."))
 
     def disconnect(self, close_code):
-        ChatConsumer.remove_consumer(self)
-
-    @classmethod
-    def broadcast(cls, message):
-        for consumer in cls.consumers.values():
-            consumer.send(text_data=message)
-
-    @classmethod
-    def add_consumer(cls, consumer):
-        consumer.id = cls.next_consumer_id
-        cls.next_consumer_id += 1
-        cls.consumers[consumer.id] = consumer
-
-    @classmethod
-    def remove_consumer(cls, consumer):
-        del cls.consumers[consumer.id]
+        unregister(self, self.format(f"{self.user.user_name} disconnected."))
