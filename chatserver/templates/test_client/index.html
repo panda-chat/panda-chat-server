@@ -5,26 +5,48 @@
     <title>Panda Chat</title>
 <script>
     var socket;
+    var is_scrolled_to_bottom = true;
 
     document.addEventListener("DOMContentLoaded", function() {
-        var is_scrolled_to_bottom = true;
         var scroll_tolerance = 20;
         var messages = document.getElementById("messages");
         messages.addEventListener("scroll", function() {
             is_scrolled_to_bottom = messages.scrollTop + messages.clientHeight + scroll_tolerance >= messages.scrollHeight;
         });
 
-        socket = new WebSocket("ws://206.81.0.114:8000/chat/"); //TODO get url from config or something
-        socket.addEventListener("message", function (event) {
-            var node = document.createElement("p");
-            var text_node = document.createTextNode(event.data)
-            node.appendChild(text_node);
-            messages.appendChild(node);
-            if (is_scrolled_to_bottom) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
 
+                // Response is in reverse chronological order.
+                for (var i = response.length - 1; i >= 0; i--) {
+                    addTextNode(response[i])
+                }
             }
-        });
+        };
+        xhttp.open("GET", "http://127.0.0.1:8000/messages/?quantity=50", false); //TODO get url from config or something
+        xhttp.send();
+
+        openSocket();
     });
+
+    function openSocket() {
+        socket = new WebSocket("ws://127.0.0.1:8000/ws/"); //TODO get url from config or something
+        socket.addEventListener("message", function (event) {
+            addTextNode(JSON.parse(event.data));
+        });
+    }
+
+    function addTextNode(message) {
+        var node = document.createElement("p");
+        var text_node = document.createTextNode(message.sender + ": " + message.body)
+        node.appendChild(text_node);
+        messages.appendChild(node);
+        if (is_scrolled_to_bottom) { // Keep scrolled to the bottom if it already is.
+            messages.scrollTop = messages.scrollHeight - messages.clientHeight;
+        }
+    }
 
     function onMessageKeyPress() {
         var key = window.event.keyCode;
