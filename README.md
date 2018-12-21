@@ -7,8 +7,11 @@
     - Preferably put your virtual environment in /env/ or /.venv/ since those directories are already excluded via .gitignore.
   - Install other dependencies using pip.
     - `pip install -r requirements`
-  - Install PostgreSQL 11.1+
-  - Add user to PostgreSQL named `django` with password `6NdYI42&E43ZIA@pcBw@`
+  - If using Windows, also `pip install pypiwin32`.
+  - Install PostgreSQL 11.1+ and set-up database/user.
+    - `CREATE DATABASE chatserver;`
+    - `CREATE USER django WITH PASSWORD '6NdYI42&E43ZIA@pcBw@';`
+    - `GRANT ALL PRIVILEGES ON DATABASE chatserver TO django;`
 
 ## Running it
 
