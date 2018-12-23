@@ -5,7 +5,6 @@ from .broadcaster import broadcast, register, unregister
 
 
 class ChatConsumer(WebsocketConsumer, JsonFormatter):
-
     def connect(self):
         address = self.scope["client"][0]
         try:
