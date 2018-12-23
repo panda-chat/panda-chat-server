@@ -13,7 +13,5 @@ def to_json_object(body, *, id="", sender="Panda Chat", time=None):
     }
 
 
-class JsonFormatter:
-    @staticmethod
-    def format(body, *, id="", sender="Panda Chat", time=None):
-        return json.dumps(to_json_object(body, id=id, sender=sender, time=time))
+def to_json(body, *, id="", sender="Panda Chat", time=None):
+    return json.dumps(to_json_object(body, id=id, sender=sender, time=time))
