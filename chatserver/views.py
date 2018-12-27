@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from .models import Message
-from .json_formatter import to_json_object
+from .json_formatter import to_text_json_object, to_image_json_object
 
 
 def index(request):
@@ -19,8 +19,12 @@ def messages(request):
 
     return JsonResponse(
         [
-            to_json_object(
+            to_text_json_object(
                 msg.content, id=msg.id, sender=msg.sender.user_name, time=msg.created
+            )
+            if not msg.image
+            else to_image_json_object(
+                msg.image, id=msg.id, sender=msg.sender.user_name, time=msg.created
             )
             for msg in messages[:quantity]
         ],

@@ -5,5 +5,8 @@
 /.venv/
 /env/
 
+# storage for images attached to messages
+/static/user_images/
+
 # file used for easier multiline commits
 commit_message
