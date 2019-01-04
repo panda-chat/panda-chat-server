@@ -85,7 +85,7 @@
         xhttp.open("GET", "{% url 'messages' %}?quantity=50", false);
         xhttp.send();
 
-        socket = new WebSocket("ws://" + window.location.host + "/ws/");
+        socket = new WebSocket("wss://" + window.location.host + "/ws/");
         socket.onmessage = function (event) {
             addTextNode(JSON.parse(event.data));
         };
