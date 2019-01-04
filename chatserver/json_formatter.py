@@ -19,7 +19,7 @@ def to_image_json_object(image, *, id, sender, time):
         "time": int(time.timestamp()),
         "sender": str(sender),
         "image": {
-            "url": f"/{image.url}",
+            "url": f"{image.url}",
             "width": str(image.width),
             "height": str(image.height),
         },
