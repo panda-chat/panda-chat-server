@@ -12,18 +12,10 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Client(BaseModel):
-    user_name = models.CharField(max_length=200)
-    address = models.GenericIPAddressField()
-
-    def __str__(self):
-        return f"{self.user_name} ({self.address})"
-
-
 class Message(BaseModel):
-    sender = models.ForeignKey(Client, on_delete=models.PROTECT)
+    sender_name = models.CharField(max_length=200)
     content = models.CharField(max_length=1000)
     image = models.ImageField(blank=True)
 
     def __str__(self):
-        return f"{self.sender}: {self.content}"
+        return f"{self.sender_name}: {self.content}"

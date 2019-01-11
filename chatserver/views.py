@@ -20,11 +20,11 @@ def messages(request):
     return JsonResponse(
         [
             to_text_json_object(
-                msg.content, id=msg.id, sender=msg.sender.user_name, time=msg.created
+                msg.content, id=msg.id, sender=msg.sender_name, time=msg.created
             )
             if not msg.image
             else to_image_json_object(
-                msg.image, id=msg.id, sender=msg.sender.user_name, time=msg.created
+                msg.image, id=msg.id, sender=msg.sender_name, time=msg.created
             )
             for msg in messages[:quantity]
         ],

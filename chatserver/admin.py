@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from .models import Client, Message
+from .models import Message
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -18,5 +18,4 @@ class MessageAdmin(BaseAdmin):
         )
 
 
-admin.site.register(Client, BaseAdmin)
 admin.site.register(Message, MessageAdmin)
