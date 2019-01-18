@@ -2,20 +2,13 @@
 
 ## Requirements
 
-  - Python 3.7.1+
-  - (Recommended) Set up a virtual environment for the project using venv or whatever tool you prefer.
-    - Preferably put your virtual environment in /env/ or /.venv/ since those directories are already excluded via .gitignore.
-  - Install other dependencies using pip.
-    - `pip install -r requirements`
-  - If using Windows, also `pip install pypiwin32`.
-  - Install PostgreSQL 11.1+ and set-up database/user.
-    - `CREATE DATABASE chatserver;`
-    - `CREATE USER django WITH PASSWORD '6NdYI42&E43ZIA@pcBw@';`
-    - `GRANT ALL PRIVILEGES ON DATABASE chatserver TO django;`
+  - Docker and Docker Compose
 
 ## Running it
 
   - Run migrations.
-    - `python manage.py migrate`
+    - `docker-compose run web python manage.py migrate`
+  - If using Windows, you might need to install pypiwin32.
+    -  (untested) `docker-compose run web pip install pypiwin32`
   - Start the server.
-    - `python manage.py runserver`
+    - `docker-compose up`
