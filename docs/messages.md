@@ -11,6 +11,7 @@ Messages are returned in reverse chronological order.
 
 **Query Params** :
 
+* `auth_token` - an authentication token provided by the [Login endpoint](login.md)
 * `quantity` - number of messages to return (defaults to 100)
 * `before_id` - id of message to look before (defaults to None)
 
