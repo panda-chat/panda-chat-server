@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from .models import Message
+from .models import Message, User, CreationKey, AuthToken
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -19,3 +19,6 @@ class MessageAdmin(BaseAdmin):
 
 
 admin.site.register(Message, MessageAdmin)
+admin.site.register(User)
+admin.site.register(CreationKey)
+admin.site.register(AuthToken)
