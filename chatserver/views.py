@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
-from .models import Message, User, CreationKey
+from .models import Message, User, CreationKey, AuthToken
 from .json_formatter import to_text_json_object, to_image_json_object
 
 
@@ -27,6 +27,19 @@ def messages(request):
         ],
         safe=False,
     )
+
+
+def login(request):
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    user = User.objects.get(username=username)
+    assert user.password_hash == password
+
+    auth_token = AuthToken(user=user)
+    auth_token.save()
+
+    return JsonResponse({"auth_token": auth_token.id})
 
 
 def create_account_page(request):
