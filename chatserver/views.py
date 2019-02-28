@@ -5,10 +5,6 @@ from .models import Message, User, CreationKey
 from .json_formatter import to_text_json_object, to_image_json_object
 
 
-def index(request):
-    return render(request, "test_client/index.html")
-
-
 def messages(request):
     quantity = int(request.GET.get("quantity") or 100)
     before_id = request.GET.get("before_id")
