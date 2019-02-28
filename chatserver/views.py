@@ -1,6 +1,7 @@
-from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
-from .models import Message
+from .models import Message, User, CreationKey
 from .json_formatter import to_text_json_object, to_image_json_object
 
 
@@ -30,3 +31,24 @@ def messages(request):
         ],
         safe=False,
     )
+
+
+def create_account_page(request):
+    return render(request, "create_account/index.html")
+
+
+def create_account(request):
+    creation_key_id = request.POST.get("creation_key")
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    try:
+        creation_key = CreationKey.objects.get(id=creation_key_id)
+    except (CreationKey.DoesNotExist, ValidationError):
+        return HttpResponseForbidden("Invalid creation key.")  # 403 Forbidden
+
+    new_user = User(username=username, password_hash=password)
+    new_user.save()
+    creation_key.delete()
+
+    return HttpResponse("Success.")  # 200 OK
