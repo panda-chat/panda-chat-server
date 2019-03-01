@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 from .models import Message, User, CreationKey, AuthToken
 from .json_formatter import to_text_json_object, to_image_json_object
+from .password_handler import is_password_valid, generate_password_hash
 
 
 def messages(request):
@@ -34,7 +35,7 @@ def login(request):
     password = request.POST.get("password")
 
     user = User.objects.get(username=username)
-    assert user.password_hash == password
+    assert is_password_valid(user.password_hash, password)
 
     auth_token = AuthToken(user=user)
     auth_token.save()
@@ -56,7 +57,7 @@ def create_account(request):
     except (CreationKey.DoesNotExist, ValidationError):
         return HttpResponseForbidden("Invalid creation key.")  # 403 Forbidden
 
-    new_user = User(username=username, password_hash=password)
+    new_user = User(username=username, password_hash=generate_password_hash(password))
     new_user.save()
     creation_key.delete()
 
