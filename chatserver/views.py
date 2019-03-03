@@ -7,8 +7,14 @@ from .password_handler import is_password_valid, generate_password_hash
 
 
 def messages(request):
+    auth_token_id = request.GET.get("auth_token")
     quantity = int(request.GET.get("quantity") or 100)
     before_id = request.GET.get("before_id")
+
+    try:
+        auth_token = AuthToken.objects.get(id=auth_token_id)
+    except (AuthToken.DoesNotExist, ValidationError):
+        return HttpResponseForbidden("Invalid auth token.")  # 403 Forbidden
 
     messages = Message.objects.order_by("-created")
     if before_id != None:

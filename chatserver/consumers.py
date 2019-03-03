@@ -1,7 +1,12 @@
 import io
+from django.core.exceptions import ValidationError
 from channels.generic.websocket import WebsocketConsumer
-from .models import Message
-from .json_formatter import to_text_json as format_text, to_image_json as format_image
+from .models import Message, AuthToken, User
+from .json_formatter import (
+    to_text_json as format_text,
+    to_image_json as format_image,
+    to_error_json as format_error,
+)
 from .image_random_filename_generator import generate as generate_filename
 from .broadcaster import broadcast, register, unregister
 
@@ -9,12 +14,6 @@ from .broadcaster import broadcast, register, unregister
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
-        if "username" not in self.scope["session"]:
-            self.send(text_data=format_text("What is your name?"))
-        else:
-            register(
-                self, format_text(f"{self.scope['session']['username']} connected.")
-            )
 
     def receive(self, *, text_data=None, bytes_data=None):
         if "username" not in self.scope["session"]:
@@ -25,16 +24,17 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_image(bytes_data)
 
     def receive_first_message(self, text_data):
-        if text_data != None:
-            self.scope["session"]["username"] = text_data
+        try:
+            auth_token = AuthToken.objects.get(id=text_data)
+
+            self.scope["session"]["username"] = auth_token.user.username
             self.scope["session"].save()
             register(
                 self,
                 format_text(f"{self.scope['session']['username']} joined the chat."),
             )
-
-        else:
-            self.send(text_data=format_text("First, what is your name?"))
+        except (AuthToken.DoesNotExist, ValidationError):
+            self.send(text_data=format_error("INVALID_AUTH_TOKEN"))
 
     def receive_text(self, text_data):
         new_message = Message(

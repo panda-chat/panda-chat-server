@@ -26,9 +26,17 @@ def to_image_json_object(image, *, id, sender, time):
     }
 
 
+def to_error_json_object(message):
+    return {"error": message}
+
+
 def to_text_json(text, *, id="", sender="Panda Chat", time=None):
     return json.dumps(to_text_json_object(text, id=id, sender=sender, time=time))
 
 
 def to_image_json(image, *, id, sender, time):
     return json.dumps(to_image_json_object(image, id=id, sender=sender, time=time))
+
+
+def to_error_json(message):
+    return json.dumps(to_error_json_object(message))
