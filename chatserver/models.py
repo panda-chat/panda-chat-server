@@ -12,15 +12,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Message(BaseModel):
-    sender_name = models.CharField(max_length=200)
-    content = models.CharField(max_length=1000)
-    image = models.ImageField(blank=True)
-
-    def __str__(self):
-        return f"{self.sender_name}: {self.content}"
-
-
 class User(BaseModel):
     username = models.CharField(max_length=200)
 
@@ -41,6 +32,15 @@ class User(BaseModel):
     #
     #   8 + 1 + 28 + 1 + 44 = 82
     password_hash = models.CharField(max_length=82)
+
+
+class Message(BaseModel):
+    sender = models.ForeignKey(User, on_delete=models.PROTECT)
+    content = models.CharField(max_length=1000)
+    image = models.ImageField(blank=True)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.content}"
 
 
 class CreationKey(BaseModel):

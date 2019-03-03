@@ -19,16 +19,20 @@ def messages(request):
     messages = Message.objects.order_by("-created")
     if before_id != None:
         before_time = Message.objects.get(id=before_id).created
-        messages = messages.filter(created__lte=before_time).exclude(id=before_id)
+        messages = (
+            messages.filter(created__lte=before_time)
+            .exclude(id=before_id)
+            .select_related("sender")
+        )
 
     return JsonResponse(
         [
             to_text_json_object(
-                msg.content, id=msg.id, sender=msg.sender_name, time=msg.created
+                msg.content, id=msg.id, sender=msg.sender.username, time=msg.created
             )
             if not msg.image
             else to_image_json_object(
-                msg.image, id=msg.id, sender=msg.sender_name, time=msg.created
+                msg.image, id=msg.id, sender=msg.sender.username, time=msg.created
             )
             for msg in messages[:quantity]
         ],
