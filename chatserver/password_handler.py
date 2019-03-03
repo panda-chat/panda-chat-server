@@ -18,7 +18,10 @@ def is_password_valid(password_hash, password_attempt):
     (str_iteration_count, b64salt, b64key) = password_hash.split(split_char)
 
     return base64.b64decode(b64key) == hashlib.pbkdf2_hmac(
-        hash_algo, password_attempt, base64.b64decode(b64salt), int(str_iteration_count)
+        hash_algo,
+        password_attempt.encode("utf-8"),
+        base64.b64decode(b64salt),
+        int(str_iteration_count),
     )
 
 
@@ -27,6 +30,8 @@ def generate_password_hash(password):
 
     iteration_count = 100_000
     salt = os.urandom(20)
-    key = hashlib.pbkdf2_hmac(hash_algo, password, salt, iteration_count)
+    key = hashlib.pbkdf2_hmac(
+        hash_algo, password.encode("utf-8"), salt, iteration_count
+    )
 
     return f"{iteration_count}{split_char}{base64.b64encode(salt).decode('utf-8')}{split_char}{base64.b64encode(key).decode('utf-8')}"
