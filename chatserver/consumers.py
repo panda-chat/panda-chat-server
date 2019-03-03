@@ -14,6 +14,10 @@ from .broadcaster import broadcast, register, unregister
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
+        if "username" in self.scope["session"]:
+            register(
+                self, format_text(f"{self.scope['session']['username']} connected.")
+            )
 
     def receive(self, *, text_data=None, bytes_data=None):
         if "username" not in self.scope["session"]:
