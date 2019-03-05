@@ -1,4 +1,5 @@
 import io
+import uuid
 from django.core.exceptions import ValidationError
 from channels.generic.websocket import WebsocketConsumer
 from .models import Message, AuthToken, User
@@ -14,48 +15,40 @@ from .broadcaster import broadcast, register, unregister
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
-        if "user" in self.scope["session"]:
-            register(
-                self, format_text(f"{self.scope['session']['username']} connected.")
-            )
+        user = self.__get_session_user()
+        if user != None:
+            register(self, format_text(f"{user.username} connected."))
 
     def receive(self, *, text_data=None, bytes_data=None):
-        if "user" not in self.scope["session"]:
+        user = self.__get_session_user()
+        if user == None:
             self.receive_first_message(text_data)
         elif text_data != None:
-            self.receive_text(text_data)
+            self.receive_text(text_data, user)
         else:
-            self.receive_image(bytes_data)
+            self.receive_image(bytes_data, user)
 
     def receive_first_message(self, text_data):
         try:
-            auth_token = AuthToken.objects.get(id=text_data)
-
-            self.scope["session"]["user"] = auth_token.user
-            self.scope["session"].save()
-            register(
-                self,
-                format_text(
-                    f"{self.scope['session']['user'].username} joined the chat."
-                ),
-            )
+            user = self.__start_user_session(AuthToken.objects.get(id=text_data))
+            register(self, format_text(f"{user.username} joined the chat."))
         except (AuthToken.DoesNotExist, ValidationError):
             self.send(text_data=format_error("INVALID_AUTH_TOKEN"))
 
-    def receive_text(self, text_data):
-        new_message = Message(content=text_data, sender=self.scope["session"]["user"])
+    def receive_text(self, text_data, user):
+        new_message = Message(content=text_data, sender=user)
         new_message.save()
         broadcast(
             format_text(
                 new_message.content,
                 id=new_message.id,
-                sender=self.scope["session"]["user"].username,
+                sender=user.username,
                 time=new_message.created,
             )
         )
 
-    def receive_image(self, bytes_data):
-        new_message = Message(content="", sender=self.scope["session"]["user"])
+    def receive_image(self, bytes_data, user):
+        new_message = Message(content="", sender=user)
         new_message.save()
         img_byte_stream = io.BytesIO(bytes_data)
         new_message.image.save(generate_filename(img_byte_stream), img_byte_stream)
@@ -63,14 +56,24 @@ class ChatConsumer(WebsocketConsumer):
             format_image(
                 new_message.image,
                 id=new_message.id,
-                sender=self.scope["session"]["user"].username,
+                sender=user.username,
                 time=new_message.created,
             )
         )
 
     def disconnect(self, close_code):
-        if "user" in self.scope["session"]:
-            unregister(
-                self,
-                format_text(f"{self.scope['session']['user'].username} disconnected."),
-            )
+        user = self.__get_session_user()
+        if user != None:
+            unregister(self, format_text(f"{user.username} disconnected."))
+
+    def __start_user_session(self, auth_token):
+        self.scope["session"]["user_id"] = str(auth_token.user.id)
+        self.scope["session"].save()
+        return auth_token.user
+
+    def __get_session_user(self):
+        return (
+            User.objects.get(id=uuid.UUID(self.scope["session"]["user_id"]))
+            if "user_id" in self.scope["session"]
+            else None
+        )
