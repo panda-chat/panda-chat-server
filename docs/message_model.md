@@ -1,6 +1,6 @@
 # Message Model
 
-There are two formats for messages, one for text messages and one for image messages. Messages' formats can be determined by whether they have a `text` property or an `image` property.
+There are three formats for messages, one for text messages, one for image messages, and one for codes from the server rather than from another client. Messages' formats can be determined by whether they have a `text` property, an `image` property, or a `code` property.
 
 ## Text Message Model
 
@@ -38,5 +38,13 @@ There are two formats for messages, one for text messages and one for image mess
     "id": "48efe860-6595-4961-9b35-e17acf2d7165",
     "sender": "someone",
     "time": 1545431032
+}
+```
+
+## Code Message Model
+
+```json
+{
+    "code": "AUTH_SUCCESS"
 }
 ```

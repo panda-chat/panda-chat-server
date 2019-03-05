@@ -6,11 +6,9 @@ def broadcast(message):
         consumer.send(text_data=message)
 
 
-def register(consumer, message):
+def register(consumer):
     consumers.add(consumer)
-    broadcast(message)
 
 
-def unregister(consumer, message):
+def unregister(consumer):
     consumers.remove(consumer)
-    broadcast(message)

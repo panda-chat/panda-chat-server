@@ -6,7 +6,7 @@ from .models import Message, AuthToken, User
 from .json_formatter import (
     to_text_json as format_text,
     to_image_json as format_image,
-    to_error_json as format_error,
+    to_code_json as format_code,
 )
 from .image_random_filename_generator import generate as generate_filename
 from .broadcaster import broadcast, register, unregister
@@ -17,7 +17,10 @@ class ChatConsumer(WebsocketConsumer):
         self.accept()
         user = self.__get_session_user()
         if user != None:
-            register(self, format_text(f"{user.username} connected."))
+            register(self)
+            self.send(text_data=format_code("AUTH_SUCCESS"))
+        else:
+            self.send(text_data=format_code("AUTH_REQUEST"))
 
     def receive(self, *, text_data=None, bytes_data=None):
         user = self.__get_session_user()
@@ -31,9 +34,10 @@ class ChatConsumer(WebsocketConsumer):
     def receive_first_message(self, text_data):
         try:
             user = self.__start_user_session(AuthToken.objects.get(id=text_data))
-            register(self, format_text(f"{user.username} joined the chat."))
+            register(self)
+            self.send(text_data=format_code("AUTH_SUCCESS"))
         except (AuthToken.DoesNotExist, ValidationError):
-            self.send(text_data=format_error("INVALID_AUTH_TOKEN"))
+            self.send(text_data=format_code("INVALID_AUTH_TOKEN"))
 
     def receive_text(self, text_data, user):
         new_message = Message(content=text_data, sender=user)
@@ -64,7 +68,7 @@ class ChatConsumer(WebsocketConsumer):
     def disconnect(self, close_code):
         user = self.__get_session_user()
         if user != None:
-            unregister(self, format_text(f"{user.username} disconnected."))
+            unregister(self)
 
     def __start_user_session(self, auth_token):
         self.scope["session"]["user_id"] = str(auth_token.user.id)

@@ -6,35 +6,22 @@ The connection over which messages are sent to/from the client in real-time.
 
 ## Initializing
 
-Before the connection sends/receives messages, it must be initialized with an `auth_token`. The client should simply send the `auth_token` string after the connection is opened.
+Before the connection sends/receives messages, the client must be authorized. When the connection is opened, the client should wait for a response from the server.
 
-If `auth_token` is valid, the server will send back a message indicating the client has been connected. The client will then be able to send/receive messages over the connection.
+  - If the server responds with JSON `{ "code": "AUTH_SUCCESS" }`, the client is already authorized and can immediately send/receive messages. 
 
-If `auth_token` is invalid, the server will send back a JSON message with the error code `AUTH_TOKEN_INVALID`. The connection will stay open -- the client can retry sending `auth_token` as many times as necessary. Example JSON message:
+  - If the server responds with JSON `{ "code": "AUTH_REQUEST" }`, the client should then send an auth token.
 
-```json
-{
-    "error": "AUTH_TOKEN_INVALID"
-}
-```
+    - If the auth token is valid, the server will send back JSON `{ "code": "AUTH_SUCCESS" }`, indicating the client has been authorized. The client will then be able to send/receive messages over the connection.
+
+    - If the auth token is invalid, the server will send back JSON `{ "code": "AUTH_TOKEN_INVALID" }`. The connection will stay open -- the client can retry sending an auth token as many times as necessary.
 
 ## Sending
 
-This connection sends two types of messages, messages from other clients and messages from the server itself. Both types of messages are in JSON and use the [Message Model](message_model.md).
-
-Messages from the server itself have a blank `id`, the `sender` is `"Panda Chat"`, and the `time` is the time that the message was sent. Example:
-
-```json
-{
-    "text": "So-and-so connected.",
-    "id": "",
-    "sender": "Panda Chat",
-    "time": 1545862359
-}
-```
+See [Message Model](message_model.md).
 
 ## Receiving
 
 This connection receives strings or image blobs. Any image file type that the Python 'imghdr' library recognizes should work.
 
-In most cases, all messages received on this connection are sent to all other connected clients. The message is also saved for later retrieval via the [Messages Endpoint](messages.md).
+In most cases, all messages received on this connection are sent to all other connected clients. The only exception is the auth token message sent after an `AUTH_REQUEST`, which is sent to no one. Messages are also saved for later retrieval via the [Messages Endpoint](messages.md).
