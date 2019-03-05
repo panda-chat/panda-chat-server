@@ -1,5 +1,6 @@
 import json
 from django.utils import timezone
+from django.conf import settings
 
 
 def to_text_json_object(text, *, id, sender, time):
@@ -17,7 +18,9 @@ def to_image_json_object(image, *, id, sender, time):
         "time": int(time.timestamp()),
         "sender": {"id": str(sender.id), "name": sender.username},
         "image": {
-            "url": f"{image.url}",
+            "url": f"{image.url}"
+            if not settings.DEBUG
+            else f"{settings.MEDIA_DOMAIN}{image.url}",
             "width": str(image.width),
             "height": str(image.height),
         },

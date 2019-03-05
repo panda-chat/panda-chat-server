@@ -31,9 +31,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",
-    "storages",
-    "corsheaders",
 ]
+
+if not DEBUG:
+    INSTALLED_APPS.push("storages")
+    INSTALLED_APPS.push("corsheaders")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -119,21 +121,31 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# AWS S3 Settings
-# https://simpleisbetterthancomplex.com/tutorial/2017/08/01/how-to-setup-amazon-s3-in-a-django-project.html
-# https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/
+if not DEBUG:
+    # AWS S3 Settings (for production)
+    # https://simpleisbetterthancomplex.com/tutorial/2017/08/01/how-to-setup-amazon-s3-in-a-django-project.html
+    # https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/
 
-AWS_S3_OBJECT_PARAMETERS = {
-    "Expires": "Thu, 31 Dec 2099 20:00:00 GMT",
-    "CacheControl": "max-age=94608000",
-}
+    AWS_S3_OBJECT_PARAMETERS = {
+        "Expires": "Thu, 31 Dec 2099 20:00:00 GMT",
+        "CacheControl": "max-age=94608000",
+    }
 
-AWS_STORAGE_BUCKET_NAME = "images.pandachat"
-AWS_S3_REGION_NAME = "us-east-2"  # e.g. us-east-2
-AWS_ACCESS_KEY_ID = "AKIAIS5A5ECNTC6V7GQQ"
-AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+    AWS_STORAGE_BUCKET_NAME = "images.pandachat"
+    AWS_S3_REGION_NAME = "us-east-2"  # e.g. us-east-2
+    AWS_ACCESS_KEY_ID = "AKIAIS5A5ECNTC6V7GQQ"
+    AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 
-DEFAULT_FILE_STORAGE = "pandachat.storage_backends.MediaStorage"
+    DEFAULT_FILE_STORAGE = "pandachat.storage_backends.MediaStorage"
+
+else:
+    # Media File Settings (for development)
+
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    MEDIA_URL = "/media/"
+    MEDIA_DOMAIN = (
+        "http://localhost:4000"
+    )  # custom setting for constructing image urls for the client
 
 
 # Internationalization

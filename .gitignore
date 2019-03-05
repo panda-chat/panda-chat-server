@@ -6,7 +6,7 @@
 /env/
 
 # storage for images attached to messages
-/static/user_images/
+/media/
 
 # file used for easier multiline commits
 commit_message
