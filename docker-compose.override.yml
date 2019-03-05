@@ -5,3 +5,9 @@ services:
     build: .
     volumes:
       - .:/app
+    environment:
+      - DEBUG=TRUE
+
+      # Secret environment variables. These values are for development only -- DO NOT copy these values into production.
+      - DJANGO_SECRET_KEY=@+g_1+9i%#!6mi05jgui9tb^fenhw^pkdaxd)&3h&0t^se9^py
+      - AWS_SECRET_ACCESS_KEY=none

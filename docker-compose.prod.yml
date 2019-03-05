@@ -1,5 +1,15 @@
+# This file is to be used to replace docker-compose.override.yml in a production environment.
+# The commented out environment variables need to be set as part of deployment -- their values must be kept secret so they can't go in the repo.
+
 version: '3'
 
 services:
   web:
-    image: panda-chat-server
+    image: alexandercstephens/panda-chat-server
+    environment:
+      - DEBUG=FALSE
+
+      # Secret environment variables. Must be uncommented and set as part of the deployment process.
+      # - DJANGO_SECRET_KEY=
+      # - AWS_SECRET_ACCESS_KEY=
+      
