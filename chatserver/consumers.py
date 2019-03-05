@@ -46,7 +46,7 @@ class ChatConsumer(WebsocketConsumer):
             format_text(
                 new_message.content,
                 id=new_message.id,
-                sender=user.username,
+                sender=user,
                 time=new_message.created,
             )
         )
@@ -60,7 +60,7 @@ class ChatConsumer(WebsocketConsumer):
             format_image(
                 new_message.image,
                 id=new_message.id,
-                sender=user.username,
+                sender=user,
                 time=new_message.created,
             )
         )

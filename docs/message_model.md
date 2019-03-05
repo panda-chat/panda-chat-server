@@ -6,7 +6,9 @@ There are three formats for messages, one for text messages, one for image messa
 
 * `text`, string - text of the message
 * `id`, string - UUID identifying the message
-* `sender`, string - username of the sender
+* `sender` - details about the sender of the message
+  * `id`, string - UUID identifying the sender
+  * `name`, string - username of the sender
 * `time`, int - UNIX timestamp of when the message was first received by the server
 
 ```json
@@ -25,7 +27,9 @@ There are three formats for messages, one for text messages, one for image messa
   * `width` - width of the image
   * `height` - height of the image
 * `id`, string - UUID identifying the message
-* `sender`, string - username of the sender
+* `sender` - details about the sender of the message
+  * `id`, string - UUID identifying the sender
+  * `name`, string - username of the sender
 * `time`, int - UNIX timestamp of when the message was first received by the server
 
 ```json
