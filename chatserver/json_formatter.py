@@ -7,7 +7,11 @@ def to_text_json_object(text, *, id, sender, time):
     return {
         "id": str(id),
         "time": int(time.timestamp()),
-        "sender": {"id": str(sender.id), "name": sender.username},
+        "sender": {
+            "id": str(sender.id),
+            "name": sender.username,
+            "color": sender.color,
+        },
         "text": str(text),
     }
 
@@ -16,7 +20,11 @@ def to_image_json_object(image, *, id, sender, time):
     return {
         "id": str(id),
         "time": int(time.timestamp()),
-        "sender": {"id": str(sender.id), "name": sender.username},
+        "sender": {
+            "id": str(sender.id),
+            "name": sender.username,
+            "color": sender.color,
+        },
         "image": {
             "url": f"{image.url}"
             if not settings.DEBUG

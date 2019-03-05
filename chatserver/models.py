@@ -33,6 +33,10 @@ class User(BaseModel):
     #   8 + 1 + 28 + 1 + 44 = 82
     password_hash = models.CharField(max_length=82)
 
+    color = models.CharField(
+        max_length=7, default="#000000"  # default to black
+    )  # HTML-style hexadecimal color strings (e.g. #FF00FF for magenta)
+
 
 class Message(BaseModel):
     sender = models.ForeignKey(User, on_delete=models.PROTECT)

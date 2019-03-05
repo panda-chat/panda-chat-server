@@ -9,13 +9,18 @@ There are three formats for messages, one for text messages, one for image messa
 * `sender` - details about the sender of the message
   * `id`, string - UUID identifying the sender
   * `name`, string - username of the sender
+  * `color`, string - color of the sender as an HTML-style hexadecimal string, e.g. #FF00FF for magenta
 * `time`, int - UNIX timestamp of when the message was first received by the server
 
 ```json
 {
     "text": "a message",
     "id": "48efe860-6595-4961-9b35-e17acf2d7165",
-    "sender": "someone",
+    "sender": {
+        "id": "c037bcd8-05f3-42d1-8001-146616db60ca",
+        "name": "someone",
+        "color": "#9000FF"
+    },
     "time": 1545431032
 }
 ```
@@ -30,6 +35,7 @@ There are three formats for messages, one for text messages, one for image messa
 * `sender` - details about the sender of the message
   * `id`, string - UUID identifying the sender
   * `name`, string - username of the sender
+  * `color`, string - color of the sender as an HTML-style hexadecimal string, e.g. #FF00FF for magenta
 * `time`, int - UNIX timestamp of when the message was first received by the server
 
 ```json
@@ -40,7 +46,11 @@ There are three formats for messages, one for text messages, one for image messa
         "height": "287"
     },
     "id": "48efe860-6595-4961-9b35-e17acf2d7165",
-    "sender": "someone",
+    "sender": {
+        "id": "c037bcd8-05f3-42d1-8001-146616db60ca",
+        "name": "someone",
+        "color": "#9000FF"
+    },
     "time": 1545431032
 }
 ```
